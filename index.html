@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>こだま — 聞いて、話す英会話</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#1B2430;
+    --bg-elevated:#232E3D;
+    --bg-card:#28344450;
+    --line:#39465A;
+    --text:#F2EFEA;
+    --text-dim:#A9B4C0;
+    --accent:#E8A33D;
+    --accent-dim:#8A6B33;
+    --accent-soft:rgba(232,163,61,0.14);
+    --good:#7FA876;
+    --good-soft:rgba(127,168,118,0.16);
+    --bad:#C1615C;
+    --bad-soft:rgba(193,97,92,0.16);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Zen Kaku Gothic New',sans-serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:40px;
+  }
+  .wrap{
+    max-width:640px;
+    margin:0 auto;
+    padding:28px 20px 60px;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:16px;
+    margin-bottom:28px;
+  }
+  .brand h1{
+    font-size:28px;
+    font-weight:900;
+    margin:0 0 4px;
+    letter-spacing:.02em;
+  }
+  .brand p{
+    margin:0;
+    color:var(--text-dim);
+    font-size:13px;
+    line-height:1.6;
+  }
+  .waves{
+    display:flex;
+    align-items:flex-end;
+    gap:3px;
+    height:30px;
+    flex-shrink:0;
+  }
+  .waves span{
+    width:4px;
+    background:var(--accent);
+    border-radius:2px;
+    opacity:.55;
+    animation:bounce 1.6s ease-in-out infinite;
+  }
+  .waves span:nth-child(1){height:10px;animation-delay:0s;}
+  .waves span:nth-child(2){height:22px;animation-delay:.15s;}
+  .waves span:nth-child(3){height:14px;animation-delay:.3s;}
+  .waves span:nth-child(4){height:26px;animation-delay:.45s;}
+  .waves span:nth-child(5){height:16px;animation-delay:.6s;}
+  @keyframes bounce{
+    0%,100%{transform:scaleY(.5);}
+    50%{transform:scaleY(1);}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .waves span{animation:none;}
+  }
+
+  /* ---------- category tabs ---------- */
+  .tabs{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:4px;
+    margin-bottom:22px;
+    scrollbar-width:none;
+  }
+  .tabs::-webkit-scrollbar{display:none;}
+  .tab{
+    flex-shrink:0;
+    padding:9px 16px;
+    border-radius:999px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--text-dim);
+    font-family:inherit;
+    font-size:14px;
+    font-weight:500;
+    cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+  }
+  .tab.active{
+    background:var(--accent);
+    border-color:var(--accent);
+    color:#1B2430;
+    font-weight:700;
+  }
+
+  /* ---------- card ---------- */
+  .card{
+    background:var(--bg-elevated);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:30px 24px 26px;
+    margin-bottom:18px;
+  }
+  .progress-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+  }
+  .progress-row span{
+    font-size:12px;
+    color:var(--text-dim);
+    letter-spacing:.04em;
+  }
+  .progress-track{
+    flex:1;
+    height:4px;
+    background:var(--line);
+    border-radius:2px;
+    margin:0 12px;
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--accent);
+    border-radius:2px;
+    transition:width .3s;
+  }
+
+  .phrase-en{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:26px;
+    font-weight:700;
+    line-height:1.4;
+    margin:0 0 10px;
+  }
+  .phrase-ja{
+    color:var(--text-dim);
+    font-size:15px;
+    margin:0 0 22px;
+  }
+
+  .controls{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:4px;
+  }
+  button.action{
+    font-family:inherit;
+    font-size:14px;
+    font-weight:700;
+    padding:12px 18px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:var(--bg-card);
+    color:var(--text);
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    transition:background .15s, border-color .15s, transform .1s;
+  }
+  button.action:active{transform:scale(.97);}
+  button.action:hover{border-color:var(--accent-dim);}
+  button.play{background:var(--accent-soft);border-color:var(--accent-dim);}
+  button.play:hover{background:var(--accent);color:#1B2430;}
+  button.mic{background:var(--bad-soft);border-color:#5c3a38;}
+  button.mic.listening{background:var(--bad);color:#fff;border-color:var(--bad);}
+  button.slow{font-size:12px;padding:12px 14px;color:var(--text-dim);}
+  button.slow.on{color:var(--accent);border-color:var(--accent-dim);}
+
+  /* ---------- feedback ---------- */
+  .feedback{
+    margin-top:20px;
+    padding-top:18px;
+    border-top:1px dashed var(--line);
+    display:none;
+  }
+  .feedback.show{display:block;}
+  .feedback-score{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:34px;
+    font-weight:700;
+    margin:0 0 6px;
+  }
+  .feedback-msg{
+    font-size:13px;
+    color:var(--text-dim);
+    margin:0 0 14px;
+  }
+  .diff{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:18px;
+    line-height:1.8;
+    margin:0;
+  }
+  .diff span{
+    padding:2px 5px;
+    border-radius:6px;
+    margin-right:2px;
+    display:inline-block;
+  }
+  .diff .match{background:var(--good-soft);color:var(--good);}
+  .diff .miss{background:var(--bad-soft);color:var(--bad);text-decoration:line-through;text-decoration-color:var(--bad);}
+  .heard{
+    margin-top:12px;
+    font-size:13px;
+    color:var(--text-dim);
+  }
+  .heard b{color:var(--text);font-weight:500;}
+
+  /* ---------- nav ---------- */
+  .nav{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+  }
+  .nav button{
+    flex:1;
+    font-family:inherit;
+    font-size:14px;
+    font-weight:700;
+    padding:13px;
+    border-radius:12px;
+    border:1px solid var(--line);
+    background:transparent;
+    color:var(--text-dim);
+    cursor:pointer;
+  }
+  .nav button:hover{color:var(--text);border-color:var(--accent-dim);}
+
+  .notice{
+    font-size:12px;
+    color:var(--text-dim);
+    background:var(--bg-elevated);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 14px;
+    margin-top:18px;
+    line-height:1.7;
+  }
+  .notice b{color:var(--accent);}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <h1>こだま</h1>
+      <p>聞いて、まねして、話す。<br>英語リスニング&amp;リピート練習</p>
+    </div>
+    <div class="waves"><span></span><span></span><span></span><span></span><span></span></div>
+  </header>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="card">
+    <div class="progress-row">
+      <span id="progressLabel">1 / 6</span>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <span id="scoreLabel">未挑戦</span>
+    </div>
+
+    <p class="phrase-en" id="phraseEn">Nice to meet you.</p>
+    <p class="phrase-ja" id="phraseJa">はじめまして</p>
+
+    <div class="controls">
+      <button class="action play" id="btnPlay">▶ 再生</button>
+      <button class="action slow" id="btnSlow">🐢 ゆっくり</button>
+      <button class="action mic" id="btnMic">🎤 リピートする</button>
+    </div>
+
+    <div class="feedback" id="feedback">
+      <p class="feedback-score" id="feedbackScore">0%</p>
+      <p class="feedback-msg" id="feedbackMsg"></p>
+      <p class="diff" id="diff"></p>
+      <p class="heard" id="heard"></p>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button id="btnPrev">← 前へ</button>
+    <button id="btnNext">次へ →</button>
+  </div>
+
+  <p class="notice" id="notice"></p>
+
+</div>
+
+<script>
+const phrases = [
+  {cat:"あいさつ", en:"Nice to meet you.", ja:"はじめまして"},
+  {cat:"あいさつ", en:"How are you doing today?", ja:"今日の調子はどう?"},
+  {cat:"あいさつ", en:"My name is Mitsue.", ja:"私の名前は光江です"},
+  {cat:"あいさつ", en:"Where are you from?", ja:"どちらのご出身ですか"},
+  {cat:"あいさつ", en:"I'm looking forward to working with you.", ja:"ご一緒できて嬉しいです"},
+  {cat:"あいさつ", en:"Could you say that again, please?", ja:"もう一度言っていただけますか"},
+
+  {cat:"日常会話", en:"What time does the meeting start?", ja:"会議は何時に始まりますか"},
+  {cat:"日常会話", en:"I'll be there in five minutes.", ja:"5分で着きます"},
+  {cat:"日常会話", en:"Do you have any recommendations?", ja:"おすすめはありますか"},
+  {cat:"日常会話", en:"It's been a long day.", ja:"今日は長い一日でした"},
+  {cat:"日常会話", en:"Let's grab a coffee sometime.", ja:"今度コーヒーでも飲みましょう"},
+  {cat:"日常会話", en:"Thanks for your help.", ja:"手伝ってくれてありがとう"},
+
+  {cat:"旅行", en:"Could you tell me how to get to the station?", ja:"駅までの行き方を教えてください"},
+  {cat:"旅行", en:"Is this seat taken?", ja:"この席は空いていますか"},
+  {cat:"旅行", en:"I'd like to check in, please.", ja:"チェックインをお願いします"},
+  {cat:"旅行", en:"How much does this cost?", ja:"これはいくらですか"},
+  {cat:"旅行", en:"Can I get a window seat?", ja:"窓側の席にできますか"},
+  {cat:"旅行", en:"What time does it close?", ja:"閉まるのは何時ですか"},
+
+  {cat:"ビジネス", en:"Let's schedule a follow-up meeting.", ja:"フォローアップの打ち合わせを設定しましょう"},
+  {cat:"ビジネス", en:"I'll send you the document by email.", ja:"資料はメールでお送りします"},
+  {cat:"ビジネス", en:"Could you clarify that point?", ja:"その点について詳しく教えていただけますか"},
+  {cat:"ビジネス", en:"We appreciate your patience.", ja:"お待たせして申し訳ございません"},
+  {cat:"ビジネス", en:"Let me get back to you on that.", ja:"それについては後ほどご連絡します"},
+  {cat:"ビジネス", en:"The deadline is next Friday.", ja:"締め切りは来週の金曜日です"},
+];
+
+const categories = [...new Set(phrases.map(p => p.cat))];
+let currentCat = categories[0];
+let currentIndex = 0;
+let slow = false;
+let recognizing = false;
+
+const els = {
+  tabs: document.getElementById('tabs'),
+  phraseEn: document.getElementById('phraseEn'),
+  phraseJa: document.getElementById('phraseJa'),
+  progressLabel: document.getElementById('progressLabel'),
+  progressFill: document.getElementById('progressFill'),
+  scoreLabel: document.getElementById('scoreLabel'),
+  btnPlay: document.getElementById('btnPlay'),
+  btnSlow: document.getElementById('btnSlow'),
+  btnMic: document.getElementById('btnMic'),
+  btnPrev: document.getElementById('btnPrev'),
+  btnNext: document.getElementById('btnNext'),
+  feedback: document.getElementById('feedback'),
+  feedbackScore: document.getElementById('feedbackScore'),
+  feedbackMsg: document.getElementById('feedbackMsg'),
+  diff: document.getElementById('diff'),
+  heard: document.getElementById('heard'),
+  notice: document.getElementById('notice'),
+};
+
+// ---------- storage ----------
+const STORE_KEY = 'kodama-scores';
+function loadScores(){
+  try{ return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
+  catch(e){ return {}; }
+}
+function saveScore(id, score){
+  const scores = loadScores();
+  if(!scores[id] || scores[id] < score){
+    scores[id] = score;
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify(scores)); }catch(e){}
+  }
+}
+
+// ---------- list for current category ----------
+function currentList(){
+  return phrases.map((p,i)=>({...p, idx:i})).filter(p => p.cat === currentCat);
+}
+function currentPhrase(){
+  return currentList()[currentIndex];
+}
+function phraseId(p){
+  return p.cat + '::' + p.en;
+}
+
+// ---------- tabs ----------
+function renderTabs(){
+  els.tabs.innerHTML = '';
+  categories.forEach(cat=>{
+    const b = document.createElement('button');
+    b.className = 'tab' + (cat === currentCat ? ' active' : '');
+    b.textContent = cat;
+    b.onclick = ()=>{ currentCat = cat; currentIndex = 0; renderTabs(); renderPhrase(); };
+    els.tabs.appendChild(b);
+  });
+}
+
+// ---------- render phrase ----------
+function renderPhrase(){
+  const list = currentList();
+  const p = list[currentIndex];
+  els.phraseEn.textContent = p.en;
+  els.phraseJa.textContent = p.ja;
+  els.progressLabel.textContent = `${currentIndex+1} / ${list.length}`;
+  els.progressFill.style.width = `${((currentIndex+1)/list.length)*100}%`;
+
+  const scores = loadScores();
+  const best = scores[phraseId(p)];
+  els.scoreLabel.textContent = best !== undefined ? `ベスト ${best}%` : '未挑戦';
+
+  els.feedback.classList.remove('show');
+  els.btnSlow.classList.toggle('on', slow);
+}
+
+// ---------- speech synthesis ----------
+let voices = [];
+function loadVoices(){
+  voices = speechSynthesis.getVoices();
+}
+loadVoices();
+if('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged = loadVoices;
+}
+function pickEnglishVoice(){
+  return voices.find(v => v.lang === 'en-US') || voices.find(v => v.lang && v.lang.startsWith('en')) || null;
+}
+function playPhrase(){
+  if(!('speechSynthesis' in window)){
+    alert('お使いのブラウザは音声読み上げに対応していません。');
+    return;
+  }
+  speechSynthesis.cancel();
+  const p = currentPhrase();
+  const u = new SpeechSynthesisUtterance(p.en);
+  u.lang = 'en-US';
+  u.rate = slow ? 0.65 : 1.0;
+  const v = pickEnglishVoice();
+  if(v) u.voice = v;
+  speechSynthesis.speak(u);
+}
+
+// ---------- speech recognition ----------
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognizer = null;
+if(SpeechRecognition){
+  recognizer = new SpeechRecognition();
+  recognizer.lang = 'en-US';
+  recognizer.continuous = false;
+  recognizer.interimResults = false;
+  recognizer.maxAlternatives = 1;
+
+  recognizer.onstart = ()=>{
+    // start()を呼んでから実際に音声を拾い始めるまでに一瞬のラグがあるため、
+    // 本当に認識が始まったタイミングでボタン表示を切り替えて合図する。
+    // ここより前に話し始めると、特に「I'm」のような短い最初の一語が
+    // 拾われずに欠けてしまうことがある。
+    els.btnMic.textContent = '● どうぞ話してください';
+  };
+  recognizer.onresult = (event)=>{
+    const transcript = event.results[0][0].transcript;
+    showFeedback(transcript);
+  };
+  recognizer.onerror = ()=>{
+    setListening(false);
+    els.feedbackMsg.textContent = '音声を聞き取れませんでした。もう一度お試しください。';
+    els.feedback.classList.add('show');
+  };
+  recognizer.onend = ()=>{
+    setListening(false);
+  };
+}
+
+function setListening(on){
+  recognizing = on;
+  els.btnMic.classList.toggle('listening', on);
+  els.btnMic.textContent = on ? '… 準備中' : '🎤 リピートする';
+}
+
+function toggleMic(){
+  if(!recognizer){
+    alert('お使いのブラウザは音声認識に対応していません。PCまたはAndroidのChromeでお試しください。');
+    return;
+  }
+  if(recognizing){
+    recognizer.stop();
+    return;
+  }
+  try{
+    recognizer.start();
+    setListening(true);
+  }catch(e){
+    setListening(false);
+  }
+}
+
+// ---------- compare & feedback ----------
+function normalize(str){
+  return str.toLowerCase().replace(/[.,!?;:'"]/g,'').trim().split(/\s+/).filter(Boolean);
+}
+
+// 単語列を最長共通部分列(LCS)で照合する。
+// 単純な「同じ位置の単語同士を比較」だと、認識結果が1語でも
+// 多い/少ない(例: I'll → I will と認識される等)だけで
+// それ以降の単語が全てズレて不一致扱いになってしまうため、
+// 前後のズレを許容できるLCSベースの照合に変更している。
+function lcsMatch(target, heard){
+  const m = target.length, n = heard.length;
+  const dp = Array.from({length: m + 1}, () => new Array(n + 1).fill(0));
+  for(let i = 1; i <= m; i++){
+    for(let j = 1; j <= n; j++){
+      dp[i][j] = target[i-1] === heard[j-1]
+        ? dp[i-1][j-1] + 1
+        : Math.max(dp[i-1][j], dp[i][j-1]);
+    }
+  }
+  const matched = new Array(m).fill(false);
+  let i = m, j = n;
+  while(i > 0 && j > 0){
+    if(target[i-1] === heard[j-1]){
+      matched[i-1] = true;
+      i--; j--;
+    }else if(dp[i-1][j] >= dp[i][j-1]){
+      i--;
+    }else{
+      j--;
+    }
+  }
+  return { length: dp[m][n], matched };
+}
+
+function showFeedback(transcript){
+  const p = currentPhrase();
+  const target = normalize(p.en);
+  const heard = normalize(transcript);
+
+  const { length: matches, matched } = lcsMatch(target, heard);
+  const diffHtml = target.map((word, i)=>{
+    const ok = matched[i];
+    return `<span class="${ok ? 'match' : 'miss'}">${word}</span>`;
+  }).join(' ');
+
+  const score = Math.round((matches / target.length) * 100);
+
+  els.feedbackScore.textContent = `${score}%`;
+  els.feedbackScore.style.color = score >= 80 ? 'var(--good)' : score >= 50 ? 'var(--accent)' : 'var(--bad)';
+  els.feedbackMsg.textContent =
+    score >= 80 ? 'とても良く聞き取れています!'
+    : score >= 50 ? '惜しい!もう一度チャレンジしてみましょう。'
+    : 'ゆっくり再生してから、もう一度リピートしてみましょう。';
+  els.diff.innerHTML = diffHtml;
+  els.heard.innerHTML = `<b>聞き取った内容:</b> ${transcript}`;
+  els.feedback.classList.add('show');
+
+  saveScore(phraseId(p), score);
+  renderPhrase(); // update best score label
+  els.feedback.classList.add('show'); // renderPhrase hides it, so re-show
+  els.feedbackScore.textContent = `${score}%`;
+}
+
+// ---------- nav ----------
+function go(delta){
+  const list = currentList();
+  currentIndex = (currentIndex + delta + list.length) % list.length;
+  renderPhrase();
+}
+
+// ---------- events ----------
+els.btnPlay.onclick = playPhrase;
+els.btnSlow.onclick = ()=>{ slow = !slow; els.btnSlow.classList.toggle('on', slow); };
+els.btnMic.onclick = toggleMic;
+els.btnPrev.onclick = ()=> go(-1);
+els.btnNext.onclick = ()=> go(1);
+
+// ---------- browser notice ----------
+(function(){
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  if(!recognizer || isSafari){
+    els.notice.innerHTML = '<b>ご案内:</b> 発音チェック(マイク認識)はChromeでのみ安定して動作します。Safari / iPhoneでは聞き取り再生のみご利用いただけます。GitHub Pagesなどhttps環境で開いてください。';
+  }else{
+    els.notice.innerHTML = '<b>ヒント:</b> はじめてマイクを使うときはブラウザの許可を求められます。「許可」を選んでください。';
+  }
+})();
+
+renderTabs();
+renderPhrase();
+</script>
+</body>
+</html>
